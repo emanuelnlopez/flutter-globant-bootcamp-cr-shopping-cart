@@ -19,4 +19,9 @@ class CartProvider with ChangeNotifier {
   double get totalPrice {
     return _cart.fold(0, (total, item) => total + item.price);
   }
+
+   void clearCart() {
+    _cart.clear();
+    notifyListeners();
+  }
 }

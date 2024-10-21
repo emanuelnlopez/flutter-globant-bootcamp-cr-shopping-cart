@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
 import '../widgets/custom_app_bar.dart';
+import 'thankyou_screen.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
@@ -28,28 +29,49 @@ class CheckoutScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text('Total: \$${cartProvider.totalPrice.toStringAsFixed(2)}', style: TextStyle(fontSize: 24)),
+            child: Text('Total: \$${cartProvider.totalPrice.toStringAsFixed(2)}', 
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+                ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text('Choose a payment method:', style: TextStyle(fontSize: 18)),
           ),
           ListTile(
+            leading: Icon(Icons.credit_card),
             title: Text('Credit Card'),
             onTap: () {
-              // Code for credit card payment 
+              Provider.of<CartProvider>(context, listen: false).clearCart(); 
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ThankYouScreen()),
+            );
             },
           ),
           ListTile(
+            leading: Icon(Icons.paypal_outlined),
             title: Text('PayPal'),
             onTap: () {
-              // Code for PayPal payment
+              Provider.of<CartProvider>(context, listen: false).clearCart();
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ThankYouScreen()),
+              );
             },
           ),
           ListTile(
+            leading: Icon(Icons.monetization_on_outlined),
             title: Text('Cash on Delivery'),
             onTap: () {
-              // Code for cash payment 
+              Provider.of<CartProvider>(context, listen: false).clearCart(); 
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ThankYouScreen()),
+              );
             },
           ),
         ],

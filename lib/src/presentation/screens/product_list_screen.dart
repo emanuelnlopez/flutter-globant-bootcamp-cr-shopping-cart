@@ -9,7 +9,7 @@ import '../widgets/custom_app_bar.dart';
 class ProductListScreen extends StatelessWidget {
   final String category;
 
-  ProductListScreen({required this.category});
+  const ProductListScreen({required this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,6 @@ class ProductListScreen extends StatelessWidget {
       'men\'s clothing': 'Men\'s Clothing',
       'women\'s clothing': 'Women\'s Clothing',
     };
-
     return Scaffold(
       appBar: CustomAppBar(title: '${category.isEmpty ? "All Products" : categoryCorrections[category] ?? category}'),
       body: FutureBuilder<List<Product>>(
@@ -34,39 +33,57 @@ class ProductListScreen extends StatelessWidget {
           }
 
           final products = snapshot.data!;
-          return ListView.builder(
+          return GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, 
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.75,
+            ),
+            padding: const EdgeInsets.all(10),
             itemCount: products.length,
             itemBuilder: (context, index) {
               final product = products[index];
-              return Column(
-                children: [
-                  ListTile(
-                    leading: Image.network(product.imageUrl),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start, 
-                      children: [
-                        Text(product.title),
-                        Text('\$${product.price}', style: TextStyle(fontWeight: FontWeight.bold)),
-                        SizedBox(height: 8), 
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailScreen(product),
-                              ),
-                            );
-                          },
-                          child: const Text('View Details'),
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
-                            textStyle: TextStyle(fontSize: 14), 
-                          ),
-                        ),
-                      ],
+              return Card(
+                elevation: 4,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center, 
+                  children: [
+                    Image.network(product.imageUrl, fit: BoxFit.cover, height: 100),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        product.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.add_shopping_cart),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0), 
+                      child: Text(
+                        '\$${product.price}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.blueAccent,
+                          ),
+                      ),
+                    ),
+                    SizedBox(height: 8), 
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailScreen(product),
+                          ),
+                        );
+                      },
+                      child: const Text('View Details'),
+                    ),
+                    SizedBox(height: 8),
+                    ElevatedButton(
                       onPressed: () {
                         Provider.of<CartProvider>(context, listen: false).addToCart(product);
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -76,10 +93,18 @@ class ProductListScreen extends StatelessWidget {
                           ),
                         );
                       },
-                    ),
-                  ),
-                  Divider(color: Colors.grey),
-                ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min, 
+                        children: const [
+                          Icon(Icons.add_shopping_cart),
+                          SizedBox(width: 8), 
+                          Text('Add to Cart'),
+                        ],
+                      ),
+                    )
+
+                  ],
+                ),
               );
             },
           );
@@ -88,4 +113,3 @@ class ProductListScreen extends StatelessWidget {
     );
   }
 }
-

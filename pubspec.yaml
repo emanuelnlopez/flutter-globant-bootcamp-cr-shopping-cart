@@ -11,15 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  lottie: ^2.2.0
 
-##
+
   http: ^1.2.2
   provider: ^6.0.0
-  flutter_svg: ^2.0.10+1
-  intl: ^0.19.0
 
-
-  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +40,9 @@ flutter:
 
   assets:
      - assets/logo.png
+     - assets/checkout.json
+     
+
 
 
 

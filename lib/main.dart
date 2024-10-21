@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'src/presentation/screens/home_screen.dart';
 import 'src/providers/cart_provider.dart';
-import 'src/presentation/screens/cart_screen.dart';
-import 'src/presentation/screens/checkout_screen.dart';
+import 'src/presentation/screens/home_screen.dart';
+import 'src/providers/theme_provider.dart'; 
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => CartProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()), 
+      ],
       child: MyApp(),
     ),
   );
@@ -17,6 +19,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       title: 'Shopping Cart App',
       theme: ThemeData(
@@ -48,18 +52,24 @@ class MyApp extends StatelessWidget {
           centerTitle: true,
           color: Colors.blueGrey,
           titleTextStyle: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
           ),
         ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.black,
+            backgroundColor: Colors.blueAccent,
+          ),
+        ),
       ),
-      themeMode: ThemeMode.system,
-      home: const HomeScreen(),
-      routes: {
-        '/cart': (context) => const CartScreen(), // route to cart
-        '/checkout': (context) => const CheckoutScreen(), // route to checkout
-      },
+      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      debugShowCheckedModeBanner: false,
+      home: HomeScreen(
+        toggleTheme: themeProvider.toggleTheme, 
+        isDarkMode: themeProvider.isDarkMode, 
+      ),
     );
   }
 }

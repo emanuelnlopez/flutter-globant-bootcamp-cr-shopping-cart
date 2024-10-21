@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
 import '../widgets/custom_app_bar.dart';
+import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -11,7 +12,10 @@ class CartScreen extends StatelessWidget {
     final cartProvider = Provider.of<CartProvider>(context);
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Cart'),
+      appBar: const CustomAppBar(
+        title: 'Cart',
+        showCartButton: false, // to avoid showing button 'Go to Cart'
+      ),
       body: cartProvider.cart.isEmpty
           ? const Center(child: Text('Your cart is empty.'))
           : ListView.builder(
@@ -27,9 +31,9 @@ class CartScreen extends StatelessWidget {
                     onPressed: () {
                       cartProvider.removeFromCart(product);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: 
-                        Text('${product.title} removed from cart'),
-                        duration: const Duration(seconds: 2),
+                        SnackBar(
+                          content: Text('${product.title} removed from cart'),
+                          duration: const Duration(seconds: 2),
                         ),
                       );
                     },
@@ -37,26 +41,49 @@ class CartScreen extends StatelessWidget {
                 );
               },
             ),
-        bottomNavigationBar: BottomAppBar(
-          child: Padding(
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
-            child: Row( 
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
                 'Total: \$${cartProvider.totalPrice.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                  Navigator.pushNamed(context, '/checkout');
-                  },
-                  child: const Text('Checkout'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (cartProvider.cart.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Your cart is empty!'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CheckoutScreen()), 
+                    );
+                  }
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.arrow_outward_rounded),
+                    SizedBox(width: 8),
+                    Text('Checkout'),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        )
-      );
-    }
-  }   
+        ),
+      ),
+    );
+  }
+}
