@@ -38,7 +38,7 @@ class ProductListScreen extends StatelessWidget {
               crossAxisCount: 2, 
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
-              childAspectRatio: 0.75,
+              childAspectRatio: 0.6,
             ),
             padding: const EdgeInsets.all(10),
             itemCount: products.length,
