@@ -7,6 +7,15 @@ import 'thankyou_screen.dart';
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({super.key});
 
+  void _navigateToThankYouScreen(BuildContext context) {
+    Provider.of<CartProvider>(context, listen: false).clearCart();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => ThankYouScreen()),
+      (route) => route.isFirst,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
@@ -44,35 +53,17 @@ class CheckoutScreen extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.credit_card),
             title: Text('Credit Card'),
-            onTap: () {
-              Provider.of<CartProvider>(context, listen: false).clearCart(); 
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ThankYouScreen()),
-            );
-            },
+            onTap: () => _navigateToThankYouScreen(context),
           ),
           ListTile(
             leading: Icon(Icons.paypal_outlined),
             title: Text('PayPal'),
-            onTap: () {
-              Provider.of<CartProvider>(context, listen: false).clearCart();
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ThankYouScreen()),
-              );
-            },
+            onTap: () => _navigateToThankYouScreen(context),
           ),
           ListTile(
             leading: Icon(Icons.monetization_on_outlined),
             title: Text('Cash on Delivery'),
-            onTap: () {
-              Provider.of<CartProvider>(context, listen: false).clearCart(); 
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ThankYouScreen()),
-              );
-            },
+            onTap: () => _navigateToThankYouScreen(context),
           ),
         ],
       ),
