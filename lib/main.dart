@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shopping_cart_app/src/providers/product_provider.dart';
+import 'package:shopping_cart_app/src/services/api_service.dart';
 import 'src/providers/cart_provider.dart';
 import 'src/presentation/screens/home_screen.dart';
 import 'src/providers/theme_provider.dart'; 
@@ -10,6 +12,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => ThemeProvider()), 
+        Provider(create: (context) => ProductProvider(apiService: ApiService())), 
       ],
       child: MyApp(),
     ),

@@ -1,22 +1,38 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart'; 
+import 'package:provider/provider.dart';
+import 'package:shopping_cart_app/src/providers/product_provider.dart';
 import 'product_list_screen.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/theme_switcher.dart'; 
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme; 
   final bool isDarkMode;
 
   const HomeScreen({
-    Key? key,
+    super.key,
     required this.toggleTheme,
     required this.isDarkMode,
-  }) : super(key: key);
+  });
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late ProductProvider _productProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _productProvider = context.read<ProductProvider>();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+      _productProvider.getCategories();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    
     final categoryIcons = {
       'jewelery': Icons.diamond,
       'electronics': Icons.devices,
@@ -27,8 +43,8 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Home'),
-      body: FutureBuilder<List<String>>(
-        future: ApiService.fetchCategories(),
+      body: StreamBuilder(
+        stream: _productProvider.categoriesStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -104,8 +120,8 @@ class HomeScreen extends StatelessWidget {
         },
       ),
       bottomNavigationBar: ThemeSwitcher(
-        isDarkMode: isDarkMode,
-        toggleTheme: toggleTheme,
+        isDarkMode: widget.isDarkMode,
+        toggleTheme: widget.toggleTheme,
       ),
     );
   }

@@ -1,28 +1,48 @@
 import 'package:flutter/material.dart';
-import '../../models/product.dart';
-import '../../services/api_service.dart';
+import 'package:shopping_cart_app/src/providers/product_provider.dart';
 import '../../providers/cart_provider.dart';
 import 'product_detail_screen.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_app_bar.dart';
 
-class ProductListScreen extends StatelessWidget {
+class ProductListScreen extends StatefulWidget {
   final String category;
 
-  const ProductListScreen({required this.category});
+  const ProductListScreen({
+    required this.category,
+    super.key,
+  });
+
+  @override
+  State<ProductListScreen> createState() => _ProductListScreenState();
+}
+
+class _ProductListScreenState extends State<ProductListScreen> {
+  late String _category;
+  late ProductProvider _productProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _category = widget.category;
+    _productProvider = context.read<ProductProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _productProvider.getProducts(category: _category);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     Map<String, String> categoryCorrections = {
-      'electronics' : 'Electronics',
+      'electronics': 'Electronics',
       'jewelery': 'Jewellery',
       'men\'s clothing': 'Men\'s Clothing',
       'women\'s clothing': 'Women\'s Clothing',
     };
     return Scaffold(
-      appBar: CustomAppBar(title: '${category.isEmpty ? "All Products" : categoryCorrections[category] ?? category}'),
-      body: FutureBuilder<List<Product>>(
-        future: category.isEmpty ? ApiService.fetchProducts() : ApiService.fetchProductsByCategory(category),
+      appBar: CustomAppBar(title: '${_category.isEmpty ? "All Products" : categoryCorrections[_category] ?? _category}'),
+      body: StreamBuilder(
+        stream: _productProvider.productsStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
